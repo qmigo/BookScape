@@ -37,6 +37,7 @@
 }
 .plistItemText>h1{
     font-size: 1.2rem;
+    text-transform: capitalize;
 }
 .plistItemText>h3{
     font-size: 0.8rem;

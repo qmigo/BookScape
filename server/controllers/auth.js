@@ -16,7 +16,8 @@ const login = async(req, res)=>{
     if(!user)
     throw new CustomAPIError('Username not exists', 401)
 
-    if(!user.verifyPassword(password))
+    const result = await user.verifyPassword(password)
+    if(result===false)
     throw new CustomAPIError('Password not match', 401)
 
     const token = user.createJWT()

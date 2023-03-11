@@ -1,34 +1,47 @@
-import React, { useState } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { faBed, faCalendarDays, faPerson, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useLocation } from 'react-router-dom'
 import './sideBarSearch.css'
 import { DateRange } from 'react-date-range'
-
+import { SearchContext } from '../../contexts/SearchContext'
 import { format } from 'date-fns'
 
-const SideBarSearch = () => {
-    const location = useLocation()
-    const [destination, setDestination] = useState(location.state.selectDest)
-    const [date, setDate] = useState(location.state.date)
-    const [counter, setCounter] = useState(location.state.counter)
+const SideBarSearch = ({
+    setMinPrice, setMaxPrice
+}) => {
+    const {city, date:ctxDate, counter:ctxCounter, dispatch } = useContext(SearchContext)  
+    const [destination, setDestination] = useState(city)
+    const [date, setDate] = useState(ctxDate)
+    const [counter, setCounter] = useState(ctxCounter)
     const [openDate, setOpenDate] = useState(false)
     const [openCounter, setOpenCounter] = useState(false)
-    console.log(destination)
-    console.log(location)
+    
+    useEffect(() => {
+        dispatch({
+            type: 'NEW_SEARCH',
+            payload: {
+                city:destination,
+                date: date,
+                counter: counter
+            }
+        })
+    }, [destination])
+    
+    console.log(city,date,counter)
+    
     return (
     <div className='sideBarSearch'>
     <div className="sideBarContainer">
          {/* <h2>Search</h2> */}
         <div className="sideSearchItem">
         <FontAwesomeIcon icon={faSearch} className='sideIcon'></FontAwesomeIcon>
-        <input type="text" placeholder='Destination' className='sideSearchInput' onChange={(e)=>setDestination(e.target.value)} value={destination}/>
+        <input type="text" placeholder='Destination' className='sideSearchInput' onChange={(e)=>{setDestination(e.target.value)}} value={destination}/>
         </div>
         
         <div className="sideSearchItem pos-rel">
         <FontAwesomeIcon icon={faCalendarDays} className='sideIcon' onClick={()=>{setOpenDate(!openDate);setOpenCounter(false)}}></FontAwesomeIcon>
             
-            <span className="sideSearchText">{`${format(date[0].startDate,'dd/MM/yyyy')} - ${format(date[0].endDate,'dd/MM/yyyy')}`}</span>
+            <span className="sideSearchText">{`${format(date[0]?.startDate,'dd/MM/yyyy')} - ${format(date[0]?.endDate,'dd/MM/yyyy')}`}</span>
             {openDate && <DateRange
                 editableDateInputs={true}
                 onChange={item => setDate([item.selection])}
@@ -71,10 +84,16 @@ const SideBarSearch = () => {
             }
         </div>
     
-        
-        <div className="sideSearchBtn" >
-                Search
+        <div className="sideSearchItem"> 
+            <input className="sideSearchInput" placeholder='Min Price' name='min' onChange={(e)=>{
+                setMinPrice(e.target.value)
+            }}/>
+            -
+            <input className="sideSearchInput" placeholder='Max Price' name='max'  onChange={(e)=>{
+                setMaxPrice(e.target.value)
+            }}/>           
         </div>
+        
         
         
       </div>

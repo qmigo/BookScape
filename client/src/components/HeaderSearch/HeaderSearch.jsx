@@ -1,12 +1,13 @@
 import { faBed, faCalendarDays, faPerson } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React,{useState} from 'react'
+import React,{useContext, useReducer, useState} from 'react'
 import './headerSearch.css'
 import { DateRange } from 'react-date-range'
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import { format } from 'date-fns'
 import { Link, useNavigate } from 'react-router-dom'
+import { SearchContext } from '../../contexts/SearchContext'
 
 
 const HeaderSearch = () => {
@@ -32,8 +33,17 @@ const HeaderSearch = () => {
         }
       ]); 
     const navigate = useNavigate()
+    const {dispatch} = useContext(SearchContext)
     const handleSearch = ()=>{
-        navigate('/list',{state:{selectDest,date,counter}})
+        dispatch({
+            type: 'NEW_SEARCH',
+            payload: {
+                city:selectDest,
+                date: date,
+                counter: counter
+            }
+        })
+        navigate('/list')
     }
   return (
     <div className="headerSearch">
